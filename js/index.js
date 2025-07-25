@@ -1,4 +1,4 @@
-class UIgoods {
+class UIGoods {
   constructor(g) {
     this.data = g;
     this.chooseNumber = 0;
@@ -22,7 +22,7 @@ class UIData {
   constructor() {
     let uiGoods = [];
     for (let i = 0; i < goods.length; i++) {
-      uiGoods.push(new UIgoods(goods[i]));
+      uiGoods.push(new UIGoods(goods[i]));
     }
     this.uiGoods = uiGoods;
     this.DeliveryThreshold = 30;
