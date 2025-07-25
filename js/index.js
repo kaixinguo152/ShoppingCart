@@ -1,7 +1,7 @@
 class UIgoods {
   constructor(g) {
     this.data = g;
-    this.choose = 0;
+    this.chooseNumber = 0;
   }
   getTotalPrice() {
     return this.choose * this.data.price;
@@ -28,6 +28,38 @@ class UIData {
     this.DeliveryThreshold = 30;
     this.DeliveryPrice = 5;
   }
+
+  getTotalPrice() {
+    let result = 0;
+    for (let i = 0; i < this.uiGoods.length; i++) {
+      result += this.uiGoods[i].getTotalPrice();
+    }
+    return result;
+  }
+
+  increase(index) {
+    this.uiGoods[index].increase();
+  }
+
+  decrease() {
+    this.uiGoods[index].decrease();
+  }
+
+  getTotalChooseNumber() {
+    let result = 0;
+    for (let i = 0; i < this.uiGoods.length; i++) {
+      result += this.uiGoods[i].chooseNumber;
+    }
+    return result;
+  }
+
+  hasGoodsInCart() {
+    return this.getTotalChooseNumber() > 0;
+  }
+
+  isCrossDeliveryThreshold() {
+    return this.getTotalPrice() >= this.DeliveryThreshold;
+  }
 }
 
 let uidata = new UIData();
@@ -41,13 +73,18 @@ const doms = {
 
 doms.total.innerHTML = "1.00";
 
+function setOffset() {
+  let offset = findIndex() * doms.goodList.children[0].clientHeight;
+  doms.goodList.style.transform = `translateY(-${offset}px)`;
+}
+
 doms.menu.addEventListener("click", (e) => {
   let item = document.querySelector(".active");
   if (item) {
     item.classList.remove("active");
   }
   e.target.classList.add("active");
-  console.log(findIndex());
+  setOffset();
 });
 
 function findIndex() {
