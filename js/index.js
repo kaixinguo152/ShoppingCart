@@ -60,25 +60,85 @@ class UIData {
   isCrossDeliveryThreshold() {
     return this.getTotalPrice() >= this.DeliveryThreshold;
   }
+
+  isChosed(index) {
+    return this.uiGoods[index].isChosed();
+  }
 }
 
-let uidata = new UIData();
-console.log(uidata.uiGoods);
+class UI {
+  constructor() {
+    this.uiData = new UIData();
+    this.doms = {
+      menu: document.querySelector(".menu"),
+      total: document.querySelector(".footer-car-total"),
+      goodsContainer: document.querySelector(".goods-list"),
+    };
+    this.createHTML();
+  }
 
-const doms = {
-  menu: document.querySelector(".menu"),
-  total: document.querySelector(".footer-car-total"),
-  goodList: document.querySelector(".goods-list"),
-};
+  createHTML() {
+    let html = "";
+    for (let i = 0; i < this.uiData.uiGoods.length; i++) {
+      let good = this.uiData.uiGoods[i];
+      html += `<div class="goods-item">
+          <img src="${good.data.pic}" alt="" class="goods-pic" />
+          <div class="goods-info">
+            <h2 class="goods-title">${good.data.title}</h2>
+            <p class="goods-desc">
+              ${good.data.desc}
+            </p>
+            <p class="goods-sell">
+              <span>月售 ${good.data.sellNumber}</span>
+              <span>好评率${good.data.favorRate}%</span>
+            </p>
+            <div class="goods-confirm">
+              <p class="goods-price">
+                <span class="goods-price-unit">￥</span>
+                <span>${good.data.price}</span>
+              </p>
+              <div class="goods-btns">
+                <i class="iconfont i-jianhao"></i>
+                <span>${good.chooseNumber}</span>
+                <i class="iconfont i-jiajianzujianjiahao"></i>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+    this.doms.goodsContainer.innerHTML = html;
+  }
 
-doms.total.innerHTML = "1.00";
+  increase() {
+    this.uiData.increase(index);
+    updateGoodsItem(index);
+  }
+  decrease(index) {
+    this.uiData.decrease(index);
+    updateGoodsItem(index);
+  }
+  updateGoodsItem() {
+    let gDom = this.doms.goodsContainer.children[index];
+
+    if (gDom.uiData.isChosed(index)) {
+      gDom.classList.add("active");
+    } else {
+      gDom.classList.remove("active");
+    }
+
+    let span = gDom.querySelector(".goods-btns span");
+    span.innerText = this.uiData.uiGoods[index].chooseNumber;
+  }
+}
+
+let ui = new UI();
 
 function setOffset() {
-  let offset = findIndex() * doms.goodList.children[0].clientHeight;
-  doms.goodList.style.transform = `translateY(-${offset}px)`;
+  let offset = findIndex() * ui.doms.goodsContainer.children[0].clientHeight;
+  ui.doms.goodsContainer.style.transform = `translateY(-${offset}px)`;
 }
 
-doms.menu.addEventListener("click", (e) => {
+ui.doms.menu.addEventListener("click", (e) => {
   let item = document.querySelector(".active");
   if (item) {
     item.classList.remove("active");
@@ -88,72 +148,10 @@ doms.menu.addEventListener("click", (e) => {
 });
 
 function findIndex() {
-  for (let i = 0; i < doms.menu.children.length; i++) {
-    if (doms.menu.children[i].classList.contains("active")) {
+  for (let i = 0; i < ui.doms.menu.children.length; i++) {
+    if (ui.doms.menu.children[i].classList.contains("active")) {
       return i;
     }
   }
   return -1;
-}
-
-for (let i = 0; i < goods.length; i++) {
-  let good = goods[i];
-  let goodItem = document.createElement("div");
-  goodItem.classList.add("good-item");
-  goodItem.innerHTML = `
-    <img src="${good.pic}" alt="" class="goods-pic" />
-    <div class="goods-info">
-      <h2 class="goods-title">${good.title}</h2>
-      <p class="goods-desc">
-        ${good.desc}
-      </p>
-      <p class="goods-sell">
-        <span>月售 ${good.sellNumber}</span>
-        <span>好评率${good.favorRate}</span>
-      </p>
-      <div class="goods-confirm">
-        <p class="goods-price">
-          <span class="goods-price-unit">￥</span>
-          <span>${good.price}</span>
-        </p>
-        <div class="goods-btns">
-          <i class="iconfont i-jianhao"></i>
-          <span>0</span>
-          <i class="iconfont i-jiajianzujianjiahao"></i>
-        </div>
-      </div>
-    </div>
-  `;
-  doms.goodList.appendChild(goodItem);
-
-  const div1 = document.createElement("div");
-  div1.classList.add("good-item");
-  div1.innerHTML = `
-  <img src="./assets/g1.png" alt="" class="goods-pic" />
-          <div class="goods-info">
-            <h2 class="goods-title">椰云拿铁</h2>
-            <p class="goods-desc">
-              1人份【年度重磅，一口吞云】 √原创椰云topping，绵密轻盈到飞起！
-              原创瑞幸椰云™工艺，使用椰浆代替常规奶盖
-              打造丰盈、绵密，如云朵般细腻奶沫体验 椰香清甜饱满，一口滑入口腔
-              【饮用建议】请注意不要用吸管，不要搅拌哦~
-            </p>
-            <p class="goods-sell">
-              <span>月售 200</span>
-              <span>好评率95%</span>
-            </p>
-            <div class="goods-confirm">
-              <p class="goods-price">
-                <span class="goods-price-unit">￥</span>
-                <span>32</span>
-              </p>
-              <div class="goods-btns">
-                <i class="iconfont i-jianhao"></i>
-                <span>0</span>
-                <i class="iconfont i-jiajianzujianjiahao"></i>
-              </div>
-            </div>
-          </div>
-  `;
-  doms.goodList.appendChild(div1);
 }
